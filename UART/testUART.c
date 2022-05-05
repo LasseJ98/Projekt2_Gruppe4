@@ -1,4 +1,6 @@
 #include "UART.h"
+#include <iostream>
+using namespace std;
 
 bool sendExample(int port, int baudRate)
 {
@@ -8,7 +10,7 @@ bool sendExample(int port, int baudRate)
 
     if (!s->Open(port, baudRate))
     {
-        std_out << _T("Could not open COM") << port << endl;
+        cout << _T("Could not open COM") << port << endl;
         return false;
     }
 
