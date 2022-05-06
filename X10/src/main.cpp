@@ -1,9 +1,17 @@
 #include <Arduino.h>
+#include "X10.h"
 
-void setup() {
-  // put your setup code here, to run once:
+X10 HouseA;
+
+void setup() 
+{
+  HouseA.initX10(18,2,4);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+
+void loop() 
+{
+    HouseA.sendCommand(1,1);
+    
+    delayMicroseconds(500000);
 }
