@@ -1,9 +1,9 @@
-#include "X10.h"
+#include "X10_Sender.h"
 
 #define HIGH 0x1
 #define LOW  0x0
-#define BIT_DELAY 2338
-#define BIT_LENGTH 950		
+#define BIT_DELAY 7333
+#define BIT_LENGTH 1000		
 
 #define UNIT1 0b01100
 #define UNIT2 0b11100
@@ -14,7 +14,7 @@
 #define ON 0b00101
 #define OFF 0b00111
 
-void X10::initX10(int tx_pin, int zero_pin, int burst_pin)
+void X10_Sender::initX10(int tx_pin, int zero_pin, int burst_pin)
 {
     tx_pin_ = tx_pin;
     zero_pin_ = zero_pin;
@@ -25,7 +25,7 @@ void X10::initX10(int tx_pin, int zero_pin, int burst_pin)
 
 }
 
-void X10::countZeroCross(int count)
+void X10_Sender::countZeroCross(int count)
 {
     int counter;
 
@@ -34,12 +34,12 @@ void X10::countZeroCross(int count)
         if (digitalRead(zero_pin_) == RISING || digitalRead(zero_pin_) == FALLING)
         {
             counter++;
-            delayMicroseconds(BIT_LENGTH);
+            delayMicroseconds(BIT_DELAY);
         }  
     }
 }
 
-void X10::sendStartCode()
+void X10_Sender::sendStartCode()
 {
     byte startcode = 0b1110;
     int bit_size = 4;
@@ -51,12 +51,13 @@ void X10::sendStartCode()
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
         delayMicroseconds(BIT_LENGTH); //Vent 950 us.
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countZeroCross(1); //Vent 1 zero-cross.
     }
 }
 
-void X10::sendCommand(int Unit, int Function)
+void X10_Sender::sendCommand(int Unit, int Function)
 {
     //Første sending af Adresse:
     sendStartCode();
@@ -83,7 +84,7 @@ void X10::sendCommand(int Unit, int Function)
    
 }
 
-void X10::sendHouseA()
+void X10_Sender::sendHouseA()
 {
     byte HouseA = 0b01101001;
     int bit_size = 8;
@@ -95,12 +96,13 @@ void X10::sendHouseA()
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
         delayMicroseconds(BIT_LENGTH); //Vent 950 us.
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countZeroCross(1); //Vent 1 zero-cross.
     }
 }
 
-void X10::sendUnit(int unit)
+void X10_Sender::sendUnit(int unit)
 {
     int array_Var = unit_Array[unit-1];
     int bit_size = 10;
@@ -112,14 +114,15 @@ void X10::sendUnit(int unit)
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
         delayMicroseconds(BIT_LENGTH); //Vent 950 us.
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countZeroCross(1); //Vent 1 zero-cross.
     } 
 }
 
-void X10::sendFunction(int function)
+void X10_Sender::sendFunction(int function)
 {
-    int function_Var = function_Array[function-1];
+    int function_Var = (function <= 1 && function >= 4 ? function_Array[function-1] : function_Array[1]);
 
     int bit_size = 10;
 
@@ -130,6 +133,7 @@ void X10::sendFunction(int function)
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
         delayMicroseconds(BIT_LENGTH); //Vent 950 us.
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countZeroCross(1); //Vent 1 zero-cross.
     } 
