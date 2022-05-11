@@ -1,11 +1,12 @@
-/*#include <Arduino.h>
+
+#include <Arduino.h>
 #include "X10_Sender.h"
 
 X10_Sender HouseA;
 
 void setup() 
 {
-  HouseA.initX10(18,2,4);
+  HouseA.initX10(18,4,3)); //TX_pin,zero-pin & burst_pin 
 }
 
 
@@ -17,4 +18,4 @@ void loop()
     delay(50);
 
     //HouseA.sendHouseA();
-}\*
+}
