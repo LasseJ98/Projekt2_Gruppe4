@@ -28,7 +28,7 @@ public:
     int ReadData(void *, int);
     int SendData(const char *, int);
     int ReadDataWaiting(void);
-
+    void Send(int port, int baudRate);
     BOOL IsOpened(void) { return (m_bOpened); }
 
 protected:

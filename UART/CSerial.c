@@ -1,7 +1,6 @@
-// Serial.cpp
-
-#include "stdafx.h"
-#include "Serial.h"
+#include "CSerial.h"
+#include <iostream>
+using namespace std;
 
 CSerial::CSerial()
 {
@@ -111,6 +110,29 @@ BOOL CSerial::WriteCommByte(unsigned char ucByte)
     }
 
     return (TRUE);
+}
+
+void CSerial::Send(int port, int baudRate)
+{
+    char data[4];
+
+    CSerial *s = new CSerial();
+
+    if (!s->Open(port, baudRate))
+    {
+        cout << "Could not open COM" << port << endl;
+    }
+
+    // Sending a string of 4 characters
+    data[0] = 0x31;
+    data[1] = 0x32;
+    data[2] = 0x33;
+    data[3] = 0x0D; // ASCII CR
+    s->SendData(data, 4);
+
+    s->Close();
+
+    delete s;
 }
 
 int CSerial::SendData(const char *buffer, int size)
