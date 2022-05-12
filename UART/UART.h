@@ -15,24 +15,26 @@
 #define ASCII_XON 0x11
 #define ASCII_XOFF 0x13
 
-class CSerial
+class UART
 {
 
 public:
-    CSerial();
-    ~CSerial();
+    UART();
+    ~UART();
 
-    BOOL Open(int nPort = 2, int nBaud = 9600);
-    BOOL Close(void);
+    bool Open(int nPort = 2, int nBaud = 9600);
+    bool Close(void);
 
     int ReadData(void *, int);
     int SendData(const char *, int);
     int ReadDataWaiting(void);
     void Send(int port, int baudRate);
-    BOOL IsOpened(void) { return (m_bOpened); }
+    bool IsOpened(void) { return (m_bOpened); }
+    void printUI();
+    void UIinput(char input);
 
 protected:
-    BOOL WriteCommByte(unsigned char);
+    bool WriteCommByte(unsigned char);
 
     HANDLE m_hIDComDev;
     OVERLAPPED m_OverlappedRead, m_OverlappedWrite;

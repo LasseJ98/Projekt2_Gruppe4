@@ -1,8 +1,11 @@
-#include "CSerial.h"
+#include "UART.h"
 #include <iostream>
 using namespace std;
 
-CSerial::CSerial()
+// Globale variable til switch
+char input;
+
+UART::UART()
 {
 
     memset(&m_OverlappedRead, 0, sizeof(OVERLAPPED));
@@ -11,13 +14,13 @@ CSerial::CSerial()
     m_bOpened = false;
 }
 
-CSerial::~CSerial()
+UART::~UART()
 {
 
     Close();
 }
 
-BOOL CSerial::Open(int nPort, int nBaud)
+bool UART::Open(int nPort, int nBaud)
 {
 
     if (m_bOpened)
@@ -75,7 +78,7 @@ BOOL CSerial::Open(int nPort, int nBaud)
     return (m_bOpened);
 }
 
-BOOL CSerial::Close(void)
+bool UART::Close(void)
 {
 
     if (!m_bOpened || m_hIDComDev == NULL)
@@ -92,9 +95,9 @@ BOOL CSerial::Close(void)
     return (TRUE);
 }
 
-BOOL CSerial::WriteCommByte(unsigned char ucByte)
+bool UART::WriteCommByte(unsigned char ucByte)
 {
-    BOOL bWriteStat;
+    bool bWriteStat;
     DWORD dwBytesWritten;
 
     bWriteStat = WriteFile(m_hIDComDev, (LPSTR)&ucByte, 1, &dwBytesWritten, &m_OverlappedWrite);
@@ -112,11 +115,11 @@ BOOL CSerial::WriteCommByte(unsigned char ucByte)
     return (TRUE);
 }
 
-void CSerial::Send(int port, int baudRate)
+void UART::Send(int port, int baudRate)
 {
     char data[4];
 
-    CSerial *s = new CSerial();
+    UART *s = new UART();
 
     if (!s->Open(port, baudRate))
     {
@@ -135,7 +138,45 @@ void CSerial::Send(int port, int baudRate)
     delete s;
 }
 
-int CSerial::SendData(const char *buffer, int size)
+void UART::printUI()
+{
+    cout << "Tast 1 for...." << endl;
+    cout << "--------------" << endl;
+    cout << "Tast 2 for...." << endl;
+    cout << "--------------" << endl;
+    cout << "Tast 3 for...." << endl;
+    cout << "--------------" << endl;
+    cout << "Tast 4 for...." << endl;
+    cout << "--------------" << endl;
+}
+
+void UART::UIinput(char input)
+{
+    switch (input)
+    {
+    case '1':
+
+        break;
+
+    case '2':
+
+        break;
+
+    case '3':
+
+        break;
+
+    case '4':
+
+        break;
+
+    default:
+        cout << "Denne tast er ikke en af valgmulighederne" << endl; // Fejlmeddelse
+        break;
+    }
+}
+
+int UART::SendData(const char *buffer, int size)
 {
 
     if (!m_bOpened || m_hIDComDev == NULL)
@@ -152,7 +193,7 @@ int CSerial::SendData(const char *buffer, int size)
     return ((int)dwBytesWritten);
 }
 
-int CSerial::ReadDataWaiting(void)
+int UART::ReadDataWaiting(void)
 {
 
     if (!m_bOpened || m_hIDComDev == NULL)
@@ -166,13 +207,13 @@ int CSerial::ReadDataWaiting(void)
     return ((int)ComStat.cbInQue);
 }
 
-int CSerial::ReadData(void *buffer, int limit)
+int UART::ReadData(void *buffer, int limit)
 {
 
     if (!m_bOpened || m_hIDComDev == NULL)
         return (0);
 
-    BOOL bReadStatus;
+    bool bReadStatus;
     DWORD dwBytesRead, dwErrorFlags;
     COMSTAT ComStat;
 
