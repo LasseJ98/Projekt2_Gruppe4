@@ -17,6 +17,8 @@
 
 class UART
 {
+    friend void styrManuelt(char);
+    friend void adminUI(char);
 
 public:
     UART();
@@ -28,7 +30,7 @@ public:
     int ReadData(void *, int);
     int SendData(const char *, int);
     int ReadDataWaiting(void);
-    void Send(int port, int baudRate);
+    void SendTest(int port, int baudRate);
     bool IsOpened(void) { return (m_bOpened); }
     void printUI();
     void UIinput(char input);
