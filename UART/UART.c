@@ -152,20 +152,25 @@ void UART::printUI()
     cout << "--------------" << endl;
 }
 
+void UART::printStyrManueltUI()
+{
+    cout << "Vaelg enheden som skal styres:" << endl;
+    cout << "1: Styr lys" << endl;
+    cout << "2: Styr lyd" << endl;
+    cout << "3: Styr dørlås" << endl;
+    cout << "4: Styr gardiner" << endl;
+    cout << "5: Styr TV" << endl;
+    cout << "6: Styr vandbeholder" << endl;
+    cout << "7: Print valgmuligheder" << endl;
+    cout << "8: Afbrud manuelt styring" << endl;
+}
+
 void UART::UIinput(char input)
 {
     switch (input)
     {
     case '1':
-        cout << "Vaelg enheden som skal styres:" << endl;
-        cout << "1: Styr lys" << endl;
-        cout << "2: Styr lyd" << endl;
-        cout << "3: Styr dørlås" << endl;
-        cout << "4: Styr gardiner" << endl;
-        cout << "5: Styr TV" << endl;
-        cout << "6: Styr vandbeholder" << endl;
-        cout << "7: Print valgmuligheder" << endl;
-        cout << "8: Afbrud manuelt styring" << endl;
+        printStyrManueltUI()
 
         for (; true;) // Uendelig for-loop
         {
@@ -174,17 +179,17 @@ void UART::UIinput(char input)
         break;
 
     case '2':
-        if (// korrekt kode);
+        if (// Besked fra arduino om at koden fra DE2 boardet er rigtigt);
 		{
             if (char i = getch() != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL
             {
-                adminUI(i); // Anmod om input fra brugeren, og derefter udfør kommandoen som er tilknyttet til det valgte tast
+                adminUI(i); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast
             }
 		}
 		break;
 
 	case '3':
-		printUI(); //Udskriv menuen igen
+		printUI(); // Udskriv menuen igen
 
 		break;
 
@@ -224,6 +229,14 @@ void styrManuelt(char input)
 
     case '6':
 
+        break;
+
+    case '7':
+        printStyrManueltUI(); // Udskriv menuen igen 
+        break;
+
+    case '8':
+        // Ingenting da vi bare skal ud af styr manuelt menuen uden at gøre noget
         break;
 
     default:

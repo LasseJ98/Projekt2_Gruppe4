@@ -7,7 +7,7 @@ int main()
 {
     UART C1;
     C1.Open();
-    C1.printUI();
+    C1.printUI(); //Udskriv menuen
     for (; true;) // Uendelig for-loop
     {
         if (char i = getch() != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL

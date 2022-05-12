@@ -33,6 +33,7 @@ public:
     void SendTest(int port, int baudRate);
     bool IsOpened(void) { return (m_bOpened); }
     void printUI();
+    void printStyrManueltUI();
     void UIinput(char input);
 
 protected:
