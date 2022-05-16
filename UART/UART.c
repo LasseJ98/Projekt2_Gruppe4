@@ -205,30 +205,45 @@ void UART::UIinput(char input)
 
 void styrManuelt(char input)
 {
+    int PWM, controlManual;
+    bool soundStatus, curtainStatus, valveStatus, lockStatus, TVStatus;
     switch (input)
     {
     case '1':
+        cout << "Indtast lysstyrke: "; // Visuel feedback til bruger om at give input
+        cin >> PWM; // Anmod brugeren om input for lysstyrke
+        if (PWM > 100) // Hvis brugeren indtaster en værdi som er over 100, så udskriv en fejlmeddelse og sæt lysstyrke til 100%
+        {
+            PWM = 100;
+            cout << "Værdien du indtastede er for hoejt. Lysstyrke sættes til 100%"
+        }
+        if (PWM < 0) // Hvis brugeren indtaster en værdi som er under 0, så udskriv en fejlmeddelse og sæt lysstyrke til 0%
+        {
+            PWM = 0;
+            cout << "Værdien du indtastede er for lavt. Lysstyrke sættes til 0%"
+        }
+        SendData(PWM); // Send den nye værdi over til Arduino
 
         break;
 
     case '2':
-
+        SendData(input); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '3':
-
+        SendData(input); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '4':
-
+        SendData(input); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '5':
-
+        SendData(input); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '6':
-
+        SendData(input); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '7':
@@ -247,7 +262,25 @@ void styrManuelt(char input)
 
 void adminUI(char input)
 {
-    // Genbrug switch sætninger fra de tidligerer funktioner
+    char adminInput
+    cout << "Vaelg rutinen som der skal aendres på" << endl;
+    cout << "1: Morgenrutine" << endl;
+    cout << "2: Aftenrutine" << endl;
+    cin >> adminInput;
+    if (adminInput == 1)
+    {
+        cout << "Du har valgt at konfigurer morgenrutine" << endl;
+        styrManuelt(char input);
+    }
+    else if (adminInput == 2)
+    {
+        cout << "Du har valgt at konfigurer aftenrutine" << endl;
+        styrManuelt(char input);
+    }
+    else
+    {
+        cout << "Du har ikke valgt en gyldig valgmulighed" << endl;
+    }
 }
 
 int UART::SendData(const char *buffer, int size)
