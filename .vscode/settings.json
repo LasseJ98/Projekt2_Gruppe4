@@ -42,5 +42,6 @@
         "xstring": "c",
         "xtr1common": "c",
         "xutility": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
