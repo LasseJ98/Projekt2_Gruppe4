@@ -165,7 +165,7 @@ void UART::printStyrManueltUI()
     cout << "8: Afbrud manuelt styring" << endl;
 }
 
-void UART::UIinput(char input)
+void UART::UIinput(char input, int password)
 {
     switch (input)
     {
@@ -179,12 +179,9 @@ void UART::UIinput(char input)
         break;
 
     case '2':
-        if (); // Besked fra arduino om at koden fra DE2 boardet er rigtigt)
+        if (password != 0); // Besked fra arduino om at koden fra DE2 boardet er rigtigt)
 		{
-            if (char i = getch() != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL
-            {
-                adminUI(i); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast
-            }
+                adminUI(i); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast 
 		}
 		break;
 

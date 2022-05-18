@@ -1,10 +1,3 @@
-/*
- * LAB12_2_RX3.c
- *
- * Created: 26-11-2020 16:00:52
- * Author : sebas
- */ 
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "led.h"
@@ -17,32 +10,29 @@ int main(void)
 	initLEDport();
 	initSWUART(BAUD_RATE);
 	sei();
+	SendString("Uart is working\r\n");
+	unsigned char input = 0;
+    unsigned char password = 0;
 	while (1)
 	{
- 		SendString("Software UART test\r\n");
-		unsigned char c = 0;
-		while (c != 'Q')
-		{
- 			SendString("Send et tegn\r\n");
- 			SendString("Q for at afslutte...\r\n");
-			c = ReadChar();
-			writeAllLEDs(c);
-			SendString("ASCII: ");
-			SendInteger(c);
-			SendChar('\r');
-			SendChar('\n');
-			
-			SendCharBinary(c);
-			SendChar('\r');
-			SendChar('\n');
-
-			SendChar(c);
- 			SendString(" + 1 giver: ");
-			SendChar(c+1);
-			SendString("\r\n\r\n");
-		}
- 		SendString("Farvel!\r\n");
-		while (1) {}
+        // if () voltage on pin == high, sendchar(1) or something
+			input = ReadChar();
+            
+            switch(input)
+            {
+                case '1':
+                writeAllLEDs(input); // replace with sender til modtager stuff
+                break;
+                case '2':
+                writeAllLEDs(input); // replace with sender til modtager stuff
+                break;
+                case '3':
+                writeAllLEDs(input); // replace with sender til modtager stuff
+                break;
+                case '4':
+                writeAllLEDs(input); // replace with sender til modtager stuff
+                break;
+            }
 	}
+    
 }
-
