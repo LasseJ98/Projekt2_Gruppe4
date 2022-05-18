@@ -6,7 +6,7 @@ X10_Sender HouseA;
 
 void setup() 
 {
-  HouseA.initX10(18,4,3)); //TX_pin,zero-pin & burst_pin 
+  HouseA.initX10(18,4,3); //TX_pin,zero-pin & burst_pin 
 }
 
 
