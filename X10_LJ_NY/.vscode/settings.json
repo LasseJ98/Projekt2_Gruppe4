@@ -42,5 +42,6 @@
     "**/.vscode",
     "**/.vscode/**"
   ],
-  "C_Cpp_Runner.cCompilerPath": "C:/Users/Duka/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe"
+  "C_Cpp_Runner.cCompilerPath": "C:/Users/Duka/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+  "C_Cpp.errorSquiggles": "Enabled"
 }

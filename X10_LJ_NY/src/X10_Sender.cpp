@@ -85,6 +85,7 @@ void X10_Sender::sendStartCode()
     byte startcode = 0b1110;
     int bit_size = 4;
 
+    countOneZeroCross();
 
    //countOneZeroCross(); //Vent til zerocross med at sende, for at synkronisere.
 
@@ -143,33 +144,61 @@ void X10_Sender::sendHouseA()
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
-        
+        burstTimerStart();
 
         //delayMicroseconds(BIT_LENGTH); //Vent 950 us.
         digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
-        countZeroCross(1); //Vent 1 zero-cross.
+        countOneZeroCross(); //Vent 1 zero-cross.
     }
 }
 
 void X10_Sender::sendUnit(int unit)
 {
-    int array_Var = unit_Array[unit-1];
-    int bit_size = 10;
-   
-
+    //uint16_t array_Var = unit_Array[unit-1];
+    int bit_size = 8;
+    byte array_Var = 0b01101001;
+    
+    //Serial.begin(9600);
    for (size_t i = 1; i <= bit_size; i++)
     {
        byte finalBit = array_Var & (1 << (bit_size-i));
+        //Serial.println(finalBit);
+        //Serial.print("\n");
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
+        burstTimerStart();
         
         digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
-        countZeroCross(1); //Vent 1 zero-cross.
-    } 
+        countOneZeroCross(); //Vent 1 zero-cross.
+    }
+    
+}
+
+void X10_Sender::sendSuffixUnit()
+{
+    byte suffix = 0b01;
+    int bit_size = 2;
+
+    for (size_t i = 1; i <= bit_size; i++)
+    {
+       byte finalBit = suffix & (1 << (bit_size-i));
+        //Serial.println(finalBit);
+        //Serial.print("\n");
+
+        digitalWrite(tx_pin_, finalBit); //Send vores bit.
+        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
+
+        burstTimerStart(); //Burst i 1 ms.
+        
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
+        digitalWrite(tx_pin_, LOW); //Sætter TX low.
+        countOneZeroCross(); //Vent 1 zero-cross.
+    }
+
 }
 
 void X10_Sender::sendFunction(int function)

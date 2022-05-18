@@ -1,4 +1,4 @@
-#include <Arduino.h>
+/*#include <Arduino.h>
 #include "X10_Modtager.h"
 
 
@@ -23,4 +23,4 @@ void loop()
 
      digitalWrite(LED_BUILTIN,HIGH);
 
-}
+}*/
