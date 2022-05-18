@@ -16,11 +16,8 @@ void setup() {
 }
 
 void loop() 
-{
-  while (HouseA.checkStartCode() != true)
-  {
-  }
-
-     digitalWrite(LED_BUILTIN,HIGH);
+{  
+  
+  HouseA.receiveCommands();
 
 }
