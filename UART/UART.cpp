@@ -179,7 +179,7 @@ void UART::UIinput(char input)
         break;
 
     case '2':
-        if (ReadData()); // Besked fra arduino om at koden fra DE2 boardet er rigtigt
+        if (); // Besked fra arduino om at koden fra DE2 boardet er rigtigt)
 		{
             if (char i = getch() != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL
             {
@@ -205,46 +205,62 @@ void UART::UIinput(char input)
 
 void styrManuelt(char input)
 {
-    int PWM, controlManual;
-    bool soundStatus, curtainStatus, valveStatus, lockStatus, TVStatus;
+    int lysstyrke;
+    char intensitet;
+    int controlManual;
     switch (input)
     {
     case '1':
-          SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
-        cout << "Indtast lysstyrke: "; // Visuel feedback til bruger om at give input
-        cin >> PWM; // Anmod brugeren om input for lysstyrke
-        if (PWM > 100) // Hvis brugeren indtaster en værdi som er over 100, så udskriv en fejlmeddelse og sæt lysstyrke til 100%
+        cout << "Vaelg lysstyrke: " << endl; // Visuel feedback til bruger om at give input
+        cout << "1: Sluk lyset" << endl;
+        cout << "2: Daempet lys" << endl;
+        cout << "3: Straalende lys" << endl;
+        cout << "4: Fuld styrke" << endl;
+        cin >> lysstyrke; // Anmod brugeren om input for lysstyrke
+        if (lysstyrke == 1) // Hvis brugeren vælger 1, så slukkes lyset
         {
-            PWM = 100;
-            cout << "Vaerdien du indtastede er for hoejt. Lysstyrke saettes til 100 procent"
+            cout << "Du har valgt Sluk lyset" << endl;
+            intensitet = 0;
         }
-        if (PWM < 0) // Hvis brugeren indtaster en værdi som er under 0, så udskriv en fejlmeddelse og sæt lysstyrke til 0%
+        else if (lysstyrke == 2) // Hvis brugeren vælger 2, så sættes lysstyrken til 33%
         {
-            PWM = 0;
-            cout << "Vaerdien du indtastede er for lavt. Lysstyrke saettes til 0 procent"
+            cout << "Du har valgt Lyset daempes" << endl;
+            intensitet = 33;
         }
-        SendData(&PWM,3); // Send lys vaerdien til Arduino
+
+        else if (lysstyrke == 3) // Hvis brugeren vælger 3, så sættes lysstyrken til 66%
+        {
+            cout << "Du har valgt Straalende lys" endl;
+            intensitet = 66;
+        }
+
+        else if (lysstyrke == 4) // Hvis brugeren vælger 4, så tændes lyset til fuld styrke
+        {
+            cout << "Du har valgt Fuld styrke" endl;
+            intensitet = 100;
+        }
+        SendData(intensitet, 1); // Send den nye værdi over til Arduino
 
         break;
 
     case '2':
-        SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '3':
-        SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '4':
-        SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '5':
-        SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '6':
-        SendData(input,1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '7':
