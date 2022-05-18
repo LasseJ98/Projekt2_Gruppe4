@@ -7,6 +7,7 @@ int main()
 {
     UART C1;
     C1.Open();
+    C1.SendTest(2,9600);
     C1.printUI(); //Udskriv menuen
     for (; true;) // Uendelig for-loop
     {
