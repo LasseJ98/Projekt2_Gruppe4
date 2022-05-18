@@ -157,7 +157,7 @@ void UART::printStyrManueltUI()
     cout << "Vaelg enheden som skal styres:" << endl;
     cout << "1: Styr lys" << endl;
     cout << "2: Styr lyd" << endl;
-    cout << "3: Styr dørlås" << endl;
+    cout << "3: Styr doerlaas" << endl;
     cout << "4: Styr gardiner" << endl;
     cout << "5: Styr TV" << endl;
     cout << "6: Styr vandbeholder" << endl;
@@ -215,12 +215,12 @@ void styrManuelt(char input)
         if (PWM > 100) // Hvis brugeren indtaster en værdi som er over 100, så udskriv en fejlmeddelse og sæt lysstyrke til 100%
         {
             PWM = 100;
-            cout << "Værdien du indtastede er for hoejt. Lysstyrke sættes til 100%"
+            cout << "Vaerdien du indtastede er for hoejt. Lysstyrke saettes til 100%"
         }
         if (PWM < 0) // Hvis brugeren indtaster en værdi som er under 0, så udskriv en fejlmeddelse og sæt lysstyrke til 0%
         {
             PWM = 0;
-            cout << "Værdien du indtastede er for lavt. Lysstyrke sættes til 0%"
+            cout << "Vaerdien du indtastede er for lavt. Lysstyrke saettes til 0%"
         }
         SendData(PWM); // Send den nye værdi over til Arduino
 
@@ -263,7 +263,7 @@ void styrManuelt(char input)
 void adminUI(char input)
 {
     char adminInput
-    cout << "Vaelg rutinen som der skal aendres på" << endl;
+    cout << "Vaelg rutinen som der skal aendres paa" << endl;
     cout << "1: Morgenrutine" << endl;
     cout << "2: Aftenrutine" << endl;
     cin >> adminInput;
