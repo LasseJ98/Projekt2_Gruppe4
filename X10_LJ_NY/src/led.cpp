@@ -44,11 +44,11 @@ Led & Led::chooseBrightness(int command)
     case DIM_COMMAND:
         setPWM(DIM_PWM);
         break;
-    case BRIGHT_COMMAND;
+    case BRIGHT_COMMAND:
         setPWM(BRIGHT_COMMAND);
         break;
     default:
-        Serial.print("\nCommmando ikke genkendt.\n")
+        Serial.print("\nCommmando ikke genkendt.\n");
         break;
     }
 

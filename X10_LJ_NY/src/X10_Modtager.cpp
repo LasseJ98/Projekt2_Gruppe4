@@ -211,7 +211,9 @@ int X10_Modtager::receiveCommands()
         return 0;
     }
 
-  Serial.print("\nDET VIRKER");
+ 
+  
+  return 0b1101001;
   rollingByteStart_ = 0;
   rollingByteHouse_ = 0;
   rollingByteUnit_ = 0;
