@@ -18,7 +18,7 @@ void X10_Modtager::initWaitTime()
     TCNT3 = 65536-(8); //Venter 500 us.
     TCCR3A = 0b00000000;
     TCCR3B = 0b00000101;
-
+    
     while ((TIFR3 & (1<<0)) == 0)
     {
         //Vent her

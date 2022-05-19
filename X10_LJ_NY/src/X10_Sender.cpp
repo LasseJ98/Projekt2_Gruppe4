@@ -106,15 +106,17 @@ void X10_Sender::sendStartCode()
 
 void X10_Sender::sendCommand(int Unit, int Function)
 {
+    
+    
     //Første sending af Adresse:
     sendStartCode();
     sendHouseA();
     sendUnit(Unit);
 
     //Anden sending af Adresse:
-    sendStartCode();
-    sendHouseA();
-    sendUnit(Unit);
+    //sendStartCode();
+    //sendHouseA();
+    //sendUnit(Unit);
 
     //Vent 6 zerocrosses:
     countZeroCross(6);
@@ -125,10 +127,13 @@ void X10_Sender::sendCommand(int Unit, int Function)
     sendFunction(Function);
 
     //Anden sending af Command:
-    sendStartCode();
-    sendHouseA();
-    sendFunction(Function);
-   
+    //sendStartCode();
+    //sendHouseA();
+    //sendFunction(Function);
+
+    //Vent 6 zerocrosses:
+    countZeroCross(6);
+
 }
 
 void X10_Sender::sendHouseA()
@@ -159,12 +164,9 @@ void X10_Sender::sendUnit(int unit)
     int bit_size = 8;
     byte array_Var = 0b01101001;
     
-    //Serial.begin(9600);
    for (size_t i = 1; i <= bit_size; i++)
     {
        byte finalBit = array_Var & (1 << (bit_size-i));
-        //Serial.println(finalBit);
-        //Serial.print("\n");
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
@@ -186,8 +188,6 @@ void X10_Sender::sendSuffixUnit()
     for (size_t i = 1; i <= bit_size; i++)
     {
        byte finalBit = suffix & (1 << (bit_size-i));
-        //Serial.println(finalBit);
-        //Serial.print("\n");
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
@@ -203,24 +203,44 @@ void X10_Sender::sendSuffixUnit()
 
 void X10_Sender::sendFunction(int function)
 {
-    int function_Var = (function <= 1 && function >= 4 ? function_Array[function-1] : function_Array[1]);
+    //int function_Var = (function <= 1 && function >= 4 ? function_Array[function-1] : function_Array[1]);
 
-    int bit_size = 10;
-   
+    int bit_size = 8;
+    byte array_Var = 0b01011001;
 
-   for (size_t i = 1; i <= bit_size; i++)
+    for (size_t i = 1; i <= bit_size; i++)
     {
-       byte finalBit = function_Var & (1 << (bit_size-i));
+       byte finalBit = array_Var & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
         digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
-        
-       
 
+        burstTimerStart();
+        
         digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
-        countZeroCross(1); //Vent 1 zero-cross.
-    } 
+        countOneZeroCross(); //Vent 1 zero-cross.
+    }
+}
+
+void X10_Sender::sendSuffixFunction()
+{
+    byte suffix = 0b10; //Value for the Suffix of a function
+    int bit_size = 2; //Size of the Suffix
+
+    for (size_t i = 1; i <= bit_size; i++)
+    {
+       byte finalBit = suffix & (1 << (bit_size-i));
+
+        digitalWrite(tx_pin_, finalBit); //Send vores bit.
+        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
+
+        burstTimerStart(); //Burst i 1 ms.
+        
+        digitalWrite(burst_pin_, LOW); //Sluk for burst
+        digitalWrite(tx_pin_, LOW); //Sætter TX low.
+        countOneZeroCross(); //Vent 1 zero-cross.
+    }
 }
 
 ISR(INT0_vect)
