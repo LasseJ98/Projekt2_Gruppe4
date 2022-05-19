@@ -17,14 +17,14 @@ X10_Modtager HouseA;
 //ID deklarations
 byte unitId = 0b00000000; //TODO: FIND ID 
 //Read data
-byte * readData;
+byte * readDataPtr = new byte[2];
 
 void setup() {
   HouseA.initX10_modtager(RX_PIN,ZERO_PIN);
 }
 
 void loop() {
-   readData* = HouseA.receiveCommands()
+   readDataPtr = &HouseA.receiveCommands();
   
   if( readData[UNIT_INDEX] == unitId)
   {
