@@ -2,13 +2,14 @@
 class Led
 {
     public:
-    Led(int = 100);
+    Led(int pin);
     
-    void init();
-    void setPWM(int);
-    bool state(bool);
+    void init(int pin);
+    void setPWM(int dutyCycle);
+    Led & chooseBrightness(int command);
 
     private:
     int pwm_;
-    bool state_;
+    int pin_;
+
 };
