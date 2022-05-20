@@ -15,7 +15,7 @@ int main(void)
     unsigned char password = 0;
 	while (1)
 	{
-        // if () voltage on pin == high, sendchar(1) or something
+        // while () voltage on pin == high, sendchar(1) or something
 			input = ReadChar();
             
             switch(input)
