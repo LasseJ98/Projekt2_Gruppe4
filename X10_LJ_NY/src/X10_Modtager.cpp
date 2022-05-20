@@ -49,74 +49,97 @@ void X10_Modtager::initX10_modtager(int rx_pin, int zero_pin)
 
 bool X10_Modtager::checkStartCode()
 {
-    byte startcode = 0b1110;
-    byte readingBit = 0b0000;
-
-
+    uint8_t startcode = 0b00001110;
+  
     while (digitalRead(rx_pin_) != HIGH)
     {
-       //Vent til den går højt
+        /* code */
     }
+    
+    countOneZeroCross();
+    delayMicroseconds(450);
+    rollingByteStart_ <<= 1;
 
-    Serial.print("Ny omgang: \n");
-    unsigned long currenttime = 0;
-    unsigned long eventtime = 980;
-    for (size_t i = 4; i > 0; i--)
+    if (digitalRead(rx_pin_) == HIGH)
     {
-        //Serial.println(digitalRead(rx_pin_));
-        readingBit |= (digitalRead(rx_pin_) << (i-1));
-        
-        countOneZeroCross();
-        //initWaitTime();
-        currenttime = 0;
-        currenttime = micros();
-
-        while (micros() > currenttime + eventtime)
-        {
-            /* code */
-        }
-        
-    
+        rollingByteStart_++;
     }
     
-    Serial.print(readingBit);
+    rollingByteStart_ &= 0b00001111;
 
-    if (readingBit == startcode)
+    if (rollingByteStart_ == startcode)
     {
         return true;
     }
-    else
+
+   return false;
+}
+
+bool X10_Modtager::checkHouseA()
+{
+    uint8_t houseCodeA = 0b01101001;
+    
+    countOneZeroCross();
+    delayMicroseconds(450);
+    rollingByteHouse_ <<= 1;
+
+    if (digitalRead(rx_pin_) == HIGH)
     {
-        return false;
+        rollingByteHouse_++;
+    }
+
+    if (rollingByteHouse_ == houseCodeA)
+    {
+        return true;
     }
     
+    
+   return false;
 }
 
-byte X10_Modtager::checkHouseA()
+bool X10_Modtager::checkUnit()
 {
-     //byte HouseA = 0b01101001;
-     byte readingBit = 0b00000000;
+    uint8_t unitCode = 0b01101001;
+    
+    countOneZeroCross();
+    delayMicroseconds(450);
+    rollingByteUnit_ <<= 1;
 
-       for (size_t i = 1; i <= 8; i++)
-       {
-           readingBit |= (digitalRead(rx_pin_) << i); 
-         
-       }
+    if (digitalRead(rx_pin_) == HIGH)
+    {
+        rollingByteUnit_++;
+    }
+    
+    if (rollingByteUnit_ == unitCode)
+    {
+        return true;
+    }
 
-    return readingBit;
+   return false;
 }
 
-uint16_t X10_Modtager::checkUnit()
+bool X10_Modtager::checkUnitSuffix()
 {
-    uint16_t readingBit = 0b0000000000;
+    uint8_t suffix = 0b00000001;
+    
+    countOneZeroCross();
+    delayMicroseconds(450);
+    rollingByteSuffixUnit_ <<= 1;
 
-       for (size_t i = 1; i <= 8; i++)
-       {
-           readingBit |= (digitalRead(rx_pin_) << i); 
-           
-       }
+    if (digitalRead(rx_pin_) == HIGH)
+    {
+        rollingByteSuffixUnit_++;
+    }
+    
+    rollingByteSuffixUnit_ &= 0b00000011;
 
-    return readingBit;
+    if (rollingByteSuffixUnit_ == suffix)
+    {
+        return true;
+    }
+
+   return false;
+
 }
 
 uint16_t X10_Modtager::checkFunction()
@@ -132,71 +155,69 @@ uint16_t X10_Modtager::checkFunction()
     return readingBit;
 }
 
-int* X10_Modtager::receiveCommands()
+int* X10_Modtager::receiveCommands(int UNIT)
 {
-   uint16_t unit[2] = {0b0000000000,0b0000000000};
-   uint16_t function[2] = {0b0000000000,0b0000000000};
+    byte my_unit = my_Unit_Array[UNIT-1];
+    int 
 
-   
-   for (size_t i = 0; i <= 1; i++)
-   {
-       while (checkStartCode() != true)
-        {
-        //Lav ingenting
-        }
-
-        checkHouseA();
-        unit[i] = checkUnit();
-   }
-
-    //Vent 6 zerocrosses:
-   for (size_t i = 0; i < 6; i++)
-   {
-      countOneZeroCross();
-   }
-   
-   for (size_t i = 0; i <= 1; i++)
-   {
-       while (checkStartCode() != true)
-       {
-        // Lav ingenting
-       }
-
-       checkHouseA();
-       function[i] = checkFunction();
-   }
-    
-    //Vent 6 zerocrosses:
-   for (size_t i = 0; i < 6; i++)
-   {
-      countOneZeroCross();
-   }
-
-    uint16_t unit_result;
-    uint16_t function_result;
-
-    for (size_t i = 0; i <= 1; i++)
+    if (rollingByteStart_ == 0b1110)
     {
-        uint16_t unit_temp = unit[i];
-        uint16_t function_temp = function [i];
-        
-
-        for (size_t i = 0; i <= 1; i++)
-        {
-            if (unit_temp == unit[i])
-            {
-                unit_result = unit_temp;
-            }
-            if (function_temp == function[i])
-            {
-                function_result = function_temp;
-            } 
-        }       
+        /* code */
+    }
+    else if (checkStartCode() == true)
+    {
+        Serial.print("\nStartcode godkendt\n");
+    }
+    else
+    {
+        return 0;
     }
 
-    static int return_array[2] = {function_result,unit_result};
+    if (rollingByteHouse_ == 0b01101001)
+    {
+      
+    }
+    else if (checkHouseA() == true)
+    {
+        Serial.print("\nHouseCode godkendt\n");
+    }
+    else
+    {
+      return 0;
+    }
 
-    return return_array;
+    if (rollingByteUnit_ == my_unit)
+    {
+        /* code */
+    }
+    else if (checkUnit() == true)
+    {
+        Serial.print("\nUnitCode godkendt\n");
+    }
+    else
+    {
+        return 0;
+    }
+
+    if (rollingByteSuffixUnit_ == 0b0001)
+    {
+        /* code */
+    }
+    else if (checkUnitSuffix() == true)
+    {
+        Serial.print("\nSuffix godkendt\n");
+        
+    }
+    else
+    {
+        return 0;
+    }
+
+ 
+  rollingByteStart_ = 0;
+  rollingByteHouse_ = 0;
+  rollingByteUnit_ = 0;
+  rollingByteSuffixUnit_ = 0;
 }
 
 
