@@ -3,8 +3,6 @@
 
 #define HIGH 0x1
 #define LOW  0x0
-#define BIT_Read_DELAY 6.108
-#define BIT_LENGTH 1	
 
 //#define UNIT[2] = {0b0110100101,0b1010100101};
 #define UNIT2 0b1010100101
@@ -13,22 +11,6 @@
 
 volatile int zero_detected_modtager;
 
-void X10_Modtager::initWaitTime()
-{
-    TCNT3 = 65536-(8); //Venter 500 us.
-    TCCR3A = 0b00000000;
-    TCCR3B = 0b00000101;
-
-    while ((TIFR3 & (1<<0)) == 0)
-    {
-        //Vent her
-    }
-
-    //Sluk clocken:
-    TCCR3B = 0b00000000;
-    //Reset Overflow:
-    TIFR3 = 0b00000001;
-}
 
 void X10_Modtager::initZeroCrossInterrupt_Modtager()
 {
@@ -37,13 +19,11 @@ void X10_Modtager::initZeroCrossInterrupt_Modtager()
 	EICRA = 0b00000100;
 }
 
-void X10_Modtager::initX10_modtager(int rx_pin, int zero_pin)
+void X10_Modtager::initX10_modtager(int rx_pin)
 {
     rx_pin_ = rx_pin;
-    zero_pin_ = zero_pin;
 
    pinMode(rx_pin_, INPUT);
-   pinMode(zero_pin_, INPUT);
 }
 
 
@@ -142,7 +122,31 @@ bool X10_Modtager::checkUnitSuffix()
 
 }
 
-uint16_t X10_Modtager::checkFunction()
+bool X10_Modtager::checkFunctionSuffix()
+{
+     uint8_t function_suffix = 0b00000010;
+    
+    countOneZeroCross();
+    delayMicroseconds(450);
+    rollingByteSuffixUnit_ <<= 1;
+
+    if (digitalRead(rx_pin_) == HIGH)
+    {
+        rollingByteSuffixUnit_++;
+    }
+    
+    rollingByteSuffixUnit_ &= 0b00000011;
+
+    if (rollingByteSuffixUnit_ == function_suffix)
+    {
+        return true;
+    }
+
+   return false;
+
+}
+
+bool X10_Modtager::checkFunction()
 {
     uint16_t readingBit = 0b0000000000;
 
@@ -155,10 +159,12 @@ uint16_t X10_Modtager::checkFunction()
     return readingBit;
 }
 
-
-
-int X10_Modtager::receiveCommands()
+int* X10_Modtager::receiveCommands(int unit, int function)
 {
+    int8_t unit_temp = unit_Array[unit-1];
+    int8_t function_temp = function_Array[function-1];
+    static int return_array[2];
+
     if (rollingByteStart_ == 0b1110)
     {
         /* code */
@@ -185,7 +191,7 @@ int X10_Modtager::receiveCommands()
       return 0;
     }
 
-    if (rollingByteUnit_ == 0b1101001)
+    if (rollingByteUnit_ == unit_temp)
     {
         /* code */
     }
@@ -204,20 +210,52 @@ int X10_Modtager::receiveCommands()
     }
     else if (checkUnitSuffix() == true)
     {
-        Serial.print("\nSuffix godkendt\n");
+        Serial.print("\nUnit Suffix godkendt\n");
     }
     else
     {
         return 0;
     }
 
- 
+    if (rollingByteFunction_ == function_temp)
+    {
+        /* code */
+    }
+    else if (checkFunction() == true)
+    {
+        Serial.print("\nFunction godkendt\n");
+
+    }
+    else
+    {
+        return 0;
+    }
+
+    if (rollingByteSuffixFunction_ == 0b0010)
+    {
+        /* code */
+    }
+    else if (checkFunctionSuffix() == true)
+    {
+        Serial.print("\nFunction Suffix godkendt\n");
+        return_array[0] = unit_temp;
+        return_array[1] = function_temp;
+
+        return return_array;
+    }
+    else
+    {
+        return 0;
+    }
+
+    
   
-  return 0b1101001;
   rollingByteStart_ = 0;
   rollingByteHouse_ = 0;
   rollingByteUnit_ = 0;
   rollingByteSuffixUnit_ = 0;
+  rollingByteFunction_ = 0;
+  rollingByteSuffixFunction_ = 0;
 }
 
 

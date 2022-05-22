@@ -4,24 +4,25 @@
 class X10_Modtager
 {
 public:
-   void initX10_modtager(int rx_pin, int zero_pin);
+   void initX10_modtager(int rx_pin);
    bool checkStartCode();
    bool checkHouseA();
    bool checkUnit();
    bool checkUnitSuffix();
-   uint16_t checkFunction();
-   int receiveCommands();
+   bool checkFunctionSuffix();
+   bool checkFunction();
+   int* receiveCommands(int unit, int function);
    void countOneZeroCross();
    void initZeroCrossInterrupt_Modtager();
-   void initWaitTime();
-
 
 private:
     int rx_pin_;
-    int zero_pin_;
     uint8_t rollingByteStart_;
     uint8_t rollingByteHouse_;
     uint8_t rollingByteUnit_;
     uint8_t rollingByteSuffixUnit_;
-    uint16_t rollingByteFunction_;
+    uint8_t rollingByteFunction_;
+    uint8_t rollingByteSuffixFunction_;
+    uint8_t unit_Array[3]{0b01101001,0b10101001,0b01011001};
+    uint8_t function_Array[2]{0b01011001,0b01011010}; //On/OFF
 };
