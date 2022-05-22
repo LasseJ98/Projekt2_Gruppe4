@@ -49,25 +49,14 @@ void X10_Sender::initZeroCrossInterrupt_Sender()
 //unsigned long first_zerocross;
 //unsigned long second_zerocross;
 
-void X10_Sender::initX10(int tx_pin, int zero_pin, int burst_pin)
+void X10_Sender::initX10(int tx_pin)
 {
     tx_pin_ = tx_pin;
-    zero_pin_ = zero_pin;
-    burst_pin_ = burst_pin;
-   pinMode(tx_pin_, OUTPUT);
-   pinMode(zero_pin_, INPUT);
-   pinMode(burst_pin_,OUTPUT);
-
-}
-
-void X10_Sender::countZeroCross(int count)
-{
-    for (size_t i = 0; i < count; i++)
-    {
-        countOneZeroCross();
-    }
     
+   pinMode(tx_pin_, OUTPUT);
+
 }
+
 
 void X10_Sender::countOneZeroCross()
 {
@@ -94,11 +83,9 @@ void X10_Sender::sendStartCode()
        byte finalBit = startcode & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
-      
+    
         burstTimerStart();
 
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross();
     }
@@ -119,7 +106,11 @@ void X10_Sender::sendCommand(int Unit, int Function)
     //sendUnit(Unit);
 
     //Vent 6 zerocrosses:
-    countZeroCross(6);
+    for (size_t i = 0; i < 6; i++)
+    {
+        countOneZeroCross();
+    }
+    
 
     //Første sending af Command:
     sendStartCode();
@@ -132,7 +123,10 @@ void X10_Sender::sendCommand(int Unit, int Function)
     //sendFunction(Function);
 
     //Vent 6 zerocrosses:
-    countZeroCross(6);
+    for (size_t i = 0; i < 6; i++)
+    {
+        countOneZeroCross();
+    }
 
 }
 
@@ -147,12 +141,9 @@ void X10_Sender::sendHouseA()
        byte finalBit = HouseA & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
         burstTimerStart();
 
-        //delayMicroseconds(BIT_LENGTH); //Vent 950 us.
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
@@ -169,11 +160,9 @@ void X10_Sender::sendUnit(int unit)
        byte finalBit = array_Var & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
         burstTimerStart();
-        
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
+    
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
@@ -190,11 +179,9 @@ void X10_Sender::sendSuffixUnit()
        byte finalBit = suffix & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
         burstTimerStart(); //Burst i 1 ms.
-        
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
+    
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
@@ -203,7 +190,7 @@ void X10_Sender::sendSuffixUnit()
 
 void X10_Sender::sendFunction(int function)
 {
-    //int function_Var = (function <= 1 && function >= 4 ? function_Array[function-1] : function_Array[1]);
+    int function_Var = (function <= 1 && function >= 4 ? function_Array[function-1] : function_Array[1]);
 
     int bit_size = 8;
     byte array_Var = 0b01011001;
@@ -213,11 +200,9 @@ void X10_Sender::sendFunction(int function)
        byte finalBit = array_Var & (1 << (bit_size-i));
 
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
 
         burstTimerStart();
         
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
@@ -232,12 +217,10 @@ void X10_Sender::sendSuffixFunction()
     {
        byte finalBit = suffix & (1 << (bit_size-i));
 
-        digitalWrite(tx_pin_, finalBit); //Send vores bit.
-        digitalWrite(burst_pin_, finalBit); //Burst et 1-tal
+        digitalWrite(tx_pin_, finalBit); //Send vores bit
 
         burstTimerStart(); //Burst i 1 ms.
-        
-        digitalWrite(burst_pin_, LOW); //Sluk for burst
+   
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
