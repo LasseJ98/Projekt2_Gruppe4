@@ -7,11 +7,28 @@ void activate()
     attachInterrupt(UDR0,PS_ISR,CHANGE);
 }
 
-PS_ISR
+ISR (PS_ISR)
 {
   int PS = digitalRead(3);
 
   Serial.write(PS);
 }
 
-//UART interrupt??
+ISR (USART0_RX_vect) // 256 mulig inputs fra 1 byte.
+{
+
+ if (Serial.available() > 0) // Tjek for indkommende seriel data
+  {
+    char inChar = Serial.read(); // Læs indkommende seriel data
+    
+    switch(inChar)
+    case 1 :
+
+    break;
+    
+    default:
+    
+    break;
+  }
+
+}
