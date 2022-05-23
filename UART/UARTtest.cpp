@@ -6,19 +6,22 @@ using namespace std;
 int main()
 {
     UART C1;
-    C1.Open(6);
-    C1.SendTest(6, 9600);
-    C1.printUI(); //Udskriv menuen
+    C1.Open(6, 9600);
+    C1.printUI(); // Udskriv menuen
     int password = 0;
+    char i = 0;
     for (; true;) // Uendelig for-loop
     {
-        if (password == ReadData(8) != 0) // fix ReadData
+        i = 0;
+        i = _getch();
+        if (password != 0) // fix ReadData
         {
             cout << "Admin password accepted" << endl;
         }
-        if (char i = getch() != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL
+        if (i != 0) // Tjekker hvis der bliver trykket på en tast, altså en software interrupt. 0 er ASCII værdien for NULL
         {
-            C1.UIinput(i, password); // Anmod om input fra brugeren, og derefter udfør kommandoen som er tilknyttet til det valgte tast
+            cout << i << endl;
+            C1.UIinput(i); // Anmod om input fra brugeren, og derefter udfør kommandoen som er tilknyttet til det valgte tast
         }
     }
 }
