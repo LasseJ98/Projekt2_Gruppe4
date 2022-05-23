@@ -4,7 +4,6 @@ void activate()
 {
     interrupts();
     attachInterrupt(digitalPintoInterrupt(3),PS_ISR,CHANGE);
-    attachInterrupt(UDR0,PS_ISR,CHANGE);
 }
 
 ISR (PS_ISR)
