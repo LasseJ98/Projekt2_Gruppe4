@@ -18,26 +18,36 @@ X10_Modtager HouseA;
 byte unitId = 0b01101001; //TODO: FIND ID 
 //Read data
 byte * readDataPtr = new byte[2];
-
+volatile int *pointer;
+volatile char test;
 void setup() {
-  HouseA.initX10_modtager(RX_PIN,ZERO_PIN);
+  HouseA.initX10_modtager(RX_PIN);
   HouseA.initZeroCrossInterrupt_Modtager();
   Serial.begin(9600);
+
 }
 
 void loop() {
 
-if (HouseA.receiveCommands() == unitId)
-{
-   Serial.print("\nDET VIRKER");
-  led.setPWM(100);
-}
 
-  //  readDataPtr = &HouseA.receiveCommands();
+  pointer = HouseA.receiveCommands(2,1);
   
-  // if( readData[UNIT_INDEX] == unitId)
-  // {
-  //   led.chooseBrightness(readData[COMMAND_INDEX]);
-  // }
+  if (Serial.available() > 0)
+  {
+    test = Serial.read();
+    Serial.print(test);
+  }
+  
+
+  if (pointer[0] == unitId)
+  {
+    Serial.print("\nDET VIRKER");
+    led.setPWM(100);
+  }
+  
+  
+  
+
 
 }
+
