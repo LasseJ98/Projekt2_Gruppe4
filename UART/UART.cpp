@@ -6,6 +6,7 @@ using namespace std;
 
 // Globale variable til switch
 char input;
+int password;
 
 UART::UART()
 {
@@ -97,6 +98,22 @@ bool UART::Close(void)
     return (TRUE);
 }
 
+int UART::SendData(const char* buffer, int size)
+{
+    if (!m_bOpened || m_hIDComDev == NULL)
+        return (0);
+
+    DWORD dwBytesWritten = 0;
+    int i;
+    for (i = 0; i < size; i++)
+    {
+        WriteCommByte(buffer[i]);
+        dwBytesWritten++;
+    }
+
+    return ((int)dwBytesWritten);
+}
+
 bool UART::WriteCommByte(unsigned char ucByte)
 {
     bool bWriteStat;
@@ -121,7 +138,7 @@ void UART::SendTest(int port, int baudRate)
 {
     char data[4];
 
-    UART *s = new UART();
+    UART* s = new UART();
 
     if (!s->Open(port, baudRate))
     {
@@ -165,45 +182,45 @@ void UART::printStyrManueltUI()
     cout << "8: Afbrud manuelt styring" << endl;
 }
 
-void UART::UIinput(char input, int password)
+void UART::UIinput(char input)
 {
     switch (input)
     {
     case '1':
-        printStyrManueltUI()
+        printStyrManueltUI();
 
         for (; true;) // Uendelig for-loop
         {
-            styrManuelt(input); // Kald på funktionen til at styre systemet manuelt
+            styrManuelt(*input); // Kald på funktionen til at styre systemet manuelt
         }
         break;
 
     case '2':
         if (password != 0); // Besked fra arduino om at koden fra DE2 boardet er rigtigt)
-		{
-                adminUI(i); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast 
-		}
-		break;
+        {
+            adminUI(input); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast 
+        }
+        break;
 
-	case '3':
-		printUI(); // Udskriv menuen igen
+    case '3':
+        printUI(); // Udskriv menuen igen
 
-		break;
+        break;
 
-	case '4':
-		// Ingenting da vi bare skal ud af menuen uden at gøre noget
-		break;
+    case '4':
+        // Ingenting da vi bare skal ud af menuen uden at gøre noget
+        break;
 
-	default:
-		cout << "Denne tast er ikke en af valgmulighederne" << endl; //Fejlmeddelse
-		break;
+    default:
+        cout << "Denne tast er ikke en af valgmulighederne" << endl; //Fejlmeddelse
+        break;
     }
 }
 
-void styrManuelt(char input)
+void UART::styrManuelt(char input)
 {
     int lysstyrke;
-    char intensitet;
+    char* intensitet;
     int controlManual;
     switch (input)
     {
@@ -217,47 +234,47 @@ void styrManuelt(char input)
         if (lysstyrke == 1) // Hvis brugeren vælger 1, så slukkes lyset
         {
             cout << "Du har valgt Sluk lyset" << endl;
-            intensitet = 0;
+            *intensitet = 0;
         }
         else if (lysstyrke == 2) // Hvis brugeren vælger 2, så sættes lysstyrken til 33%
         {
             cout << "Du har valgt Lyset daempes" << endl;
-            intensitet = 33;
+            *intensitet = 33;
         }
 
         else if (lysstyrke == 3) // Hvis brugeren vælger 3, så sættes lysstyrken til 66%
         {
-            cout << "Du har valgt Straalende lys" endl;
-            intensitet = 66;
+            cout << "Du har valgt Straalende lys" << endl;
+            *intensitet = 66;
         }
 
         else if (lysstyrke == 4) // Hvis brugeren vælger 4, så tændes lyset til fuld styrke
         {
-            cout << "Du har valgt Fuld styrke" endl;
-            intensitet = 100;
+            cout << "Du har valgt Fuld styrke" << endl;
+            *intensitet = 100;
         }
-        SendData(intensitet, 1); // Send den nye værdi over til Arduino
 
+        SendData(intensitet, 1); // Send den nye værdi over til Arduino
         break;
 
     case '2':
-        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(&input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '3':
-        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(&input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '4':
-        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(&input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '5':
-        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(&input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '6':
-        SendData(input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
+        SendData(&input, 1); // Send det samme som brugeren indtaster over til microcontroller, hvor så at Arduinoen gør noget specifikt ud fra hvad brugeren tastede
         break;
 
     case '7':
@@ -274,9 +291,13 @@ void styrManuelt(char input)
     }
 }
 
+void styrManuelt(char input)
+{
+}
+
 void adminUI(char input)
 {
-    char adminInput
+    char adminInput;
     cout << "Vaelg rutinen som der skal aendres paa" << endl;
     cout << "1: Morgenrutine" << endl;
     cout << "2: Aftenrutine" << endl;
@@ -284,34 +305,17 @@ void adminUI(char input)
     if (adminInput == 1)
     {
         cout << "Du har valgt at konfigurer morgenrutine" << endl;
-        styrManuelt(char input);
+        styrManuelt(input);
     }
     else if (adminInput == 2)
     {
         cout << "Du har valgt at konfigurer aftenrutine" << endl;
-        styrManuelt(char input);
+        styrManuelt(input);
     }
     else
     {
         cout << "Du har ikke valgt en gyldig valgmulighed" << endl;
     }
-}
-
-int UART::SendData(const char *buffer, int size)
-{
-
-    if (!m_bOpened || m_hIDComDev == NULL)
-        return (0);
-
-    DWORD dwBytesWritten = 0;
-    int i;
-    for (i = 0; i < size; i++)
-    {
-        WriteCommByte(buffer[i]);
-        dwBytesWritten++;
-    }
-
-    return ((int)dwBytesWritten);
 }
 
 int UART::ReadDataWaiting(void)
@@ -328,7 +332,7 @@ int UART::ReadDataWaiting(void)
     return ((int)ComStat.cbInQue);
 }
 
-int UART::ReadData(void *buffer, int limit)
+int UART::ReadData(void* buffer, int limit)
 {
 
     if (!m_bOpened || m_hIDComDev == NULL)
