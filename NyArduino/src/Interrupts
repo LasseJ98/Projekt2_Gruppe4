@@ -20,7 +20,7 @@ ISR (USART0_RX_vect) // 256 mulig inputs fra 1 byte.
   {
     char inChar = Serial.read(); // Læs indkommende seriel data
     
-    switch(inChar)
+    switch(inChar) // here skal alle ændringerne baseret på UART ske. aka global variables, etc...
     case 1 :
 
     break;
