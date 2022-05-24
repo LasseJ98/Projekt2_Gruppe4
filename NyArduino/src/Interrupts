@@ -3,14 +3,14 @@
 void activate()
 {
     interrupts();
-    attachInterrupt(digitalPintoInterrupt(3),PS_ISR,CHANGE);
+    attachInterrupt(digitalPintoInterrupt(3),PS_ISR,CHANGE); // Lav en interrupt hver gang der sker en ændring ved pin 3
 }
 
 ISR (PS_ISR)
 {
-  int PS = digitalRead(3);
+  int PS = digitalRead(3); // Aflæs hvad der står ved pin 3
 
-  Serial.write(PS);
+  Serial.write(PS); // Udskriv hvad der står ved pin 3
 }
 
 ISR (USART0_RX_vect) // 256 mulig inputs fra 1 byte.
