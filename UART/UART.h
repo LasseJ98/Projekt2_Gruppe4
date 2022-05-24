@@ -18,7 +18,6 @@
 class UART
 {
     friend void styrManuelt(char input);
-    friend void adminUI(char input);
 
 public:
     UART();
@@ -27,16 +26,16 @@ public:
     bool Open(int nPort = 2, int nBaud = 9600);
     bool Close(void);
 
-    int ReadData(void*, int);
-    int SendData(const char*, int);
+    int ReadData(void *, int);
+    int SendData(const char *, int);
     int ReadDataWaiting(void);
     void SendTest(int port, int baudRate);
     bool IsOpened(void) { return (m_bOpened); }
     void printUI();
     void printStyrManueltUI();
     void UIinput(char input);
-
-    void styrManuelt(char input);
+    void adminUI(char input);
+    void styrManuelt();
 
 protected:
     bool WriteCommByte(unsigned char);

@@ -186,13 +186,12 @@ void UART::UIinput(char input)
     switch (input)
     {
     case 'a':
-        printStyrManueltUI();
-        styrManuelt();
+        printStyrManueltUI(); // Udksriv menuen for manuelt styring
+        styrManuelt(); // Skift over til manuenlt styring
         break;
 
     case 'b':
-        if (password != 0)
-            ; // Besked fra arduino om at koden fra DE2 boardet er rigtigt)
+        if (password != 0) // Hvis koden til admin adging er rigtigt
         {
             adminUI(input); // Anmod om input fra admin, og derefter udfør kommandoen som er tilknyttet til det valgte tast
         }
@@ -204,7 +203,7 @@ void UART::UIinput(char input)
         break;
 
     case 'd':
-        cout << "Lukker menuen ned..." << endl; // Ingenting da vi bare skal ud af menuen uden at gøre noget
+        cout << "Lukker menuen ned..." << endl; // Lukker menuen ned
         break;
 
     default:
@@ -229,24 +228,24 @@ void UART::styrManuelt()
         cout << "c: Straalende lys" << endl;
         cout << "d: Fuld styrke" << endl;
         cin >> lysstyrke;     // Anmod brugeren om input for lysstyrke
-        if (lysstyrke == 'a') // Hvis brugeren vælger 1, så slukkes lyset
+        if (lysstyrke == 'a') // Hvis brugeren vælger a, så slukkes lyset
         {
             cout << "Du har valgt Sluk lyset" << endl;
             *intensitet = 0;
         }
-        else if (lysstyrke == 'b') // Hvis brugeren vælger 2, så sættes lysstyrken til 33%
+        else if (lysstyrke == 'b') // Hvis brugeren vælger b, så sættes lysstyrken til 33%
         {
             cout << "Du har valgt Lyset daempes" << endl;
             *intensitet = 33;
         }
 
-        else if (lysstyrke == 'c') // Hvis brugeren vælger 3, så sættes lysstyrken til 66%
+        else if (lysstyrke == 'c') // Hvis brugeren vælger c, så sættes lysstyrken til 66%
         {
             cout << "Du har valgt Straalende lys" << endl;
             *intensitet = 66;
         }
 
-        else if (lysstyrke == 'd') // Hvis brugeren vælger 4, så tændes lyset til fuld styrke
+        else if (lysstyrke == 'd') // Hvis brugeren vælger d, så tændes lyset til fuld styrke
         {
             cout << "Du har valgt Fuld styrke" << endl;
             *intensitet = 100;
