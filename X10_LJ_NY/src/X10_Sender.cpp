@@ -81,6 +81,7 @@ void X10_Sender::sendStartCode()
     byte startcode = 0b1110;
     int bit_size = 4;
 
+    zero_detected_sender = 0; //Ignorer tidligere zerocross
     countOneZeroCross();
 
    //countOneZeroCross(); //Vent til zerocross med at sende, for at synkronisere.

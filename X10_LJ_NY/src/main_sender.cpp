@@ -15,6 +15,8 @@ void setup()
  
 void loop()
 { 
-    HouseA.sendCommand(1,1);
+    //HouseA.sendCommand(1,1);
+    HouseA.sendStartCode();
+    //HouseA.sendUnit(1);
 }
 
