@@ -1,107 +1,99 @@
-#include <Arduino.h>
-#include <avr/interrupt.h>
+// #include <Arduino.h>
+// #include <avr\interrupt.h>
 
-void activate()
-{
-    sie();
-    interrupts();
-    attachInterrupt(digitalPintoInterrupt(3),PS_ISR,CHANGE);
-}
+// void activate()
+// {
+//     interrupts();
+//     attachInterrupt(digitalPinToInterrupt(3),PS,CHANGE);
+// }
 
-ISR(PS_ISR,ISR_NOBLOCK)
-{
-  int PS = digitalRead(3);
+// ISR(USART0_RX_vect) // 256 mulig inputs fra 1 byte.
+// {
 
-  Serial.write(PS);
-}
-
-ISR(USART0_RX_vect) // 256 mulig inputs fra 1 byte.
-{
-
- if (Serial.available() > 0) // Tjek for indkommende seriel data
-  {
-    char inChar = Serial.read(); // Læs indkommende seriel data
+//  if (Serial.available() > 0) // Tjek for indkommende seriel data
+//   {
+//     char inChar = Serial.read(); // Læs indkommende seriel data
     
-    switch(inChar) // here skal alle ændringerne baseret på UART ske. aka global variables, etc...
-
-    case '1' :
+//     switch(inChar) // here skal alle ændringerne baseret på UART ske. aka global variables, etc...
+//   {
+//     case '1' :
     
-    digitalWrite(7, HIGH); 
-    break;
+//     digitalWrite(7, HIGH); 
+//     break;
     
-    case 1 :
+//     case 1 :
 
-    digitalWrite(6, HIGH); 
+//     digitalWrite(6, HIGH); 
 
-    break;
+//     break;
 
-    case 3 :
+//     case 3 :
 
-    break;
+//     break;
     
-    case 4 :
+//     case 4 :
 
-    break;
+//     break;
 
-    case 5 :
+//     case 5 :
 
-    break;
+//     break;
 
-    case 6 :
+//     case 6 :
 
-    break;
+//     break;
     
-    case 7 :
+//     case 7 :
 
-    break;
+//     break;
 
-    case 8 :
+//     case 8 :
 
-    break;
+//     break;
 
-    case 9 :
+//     case 9 :
 
-    break;
+//     break;
     
-    case 10 :
+//     case 10 :
 
-    break;
+//     break;
 
-    case 11 :
+//     case 11 :
 
-    break;
+//     break;
 
-    case 12 :
+//     case 12 :
 
-    break;
+//     break;
     
-    case 13 :
+//     case 13 :
 
-    break;
+//     break;
 
-    case 14 :
+//     case 14 :
 
-    break;
+//     break;
 
-    case 15 :
+//     case 15 :
 
-    break;
+//     break;
 
-    case 16 :
+//     case 16 :
 
-    break;
+//     break;
 
-    case 17 :
+//     case 17 :
 
-    break;
+//     break;
 
-    case 18 : 
+//     case 18 : 
 
-    break;
+//     break;
   
-    default:
+//     default:
     
-    break;
-  }
-
-}
+//     break;
+//   }
+//   }
+// }
