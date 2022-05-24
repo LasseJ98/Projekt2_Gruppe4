@@ -1,9 +1,8 @@
 #include <Arduino.h>
 #include <avr\interrupt.h>
-// fix plz
 void activate();
 void PS();
-
+// why you gotta do this
 void setup()
 {
   // open the serial port:
