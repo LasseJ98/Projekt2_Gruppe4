@@ -15,8 +15,11 @@ void setup()
  
 void loop()
 { 
-    //HouseA.sendCommand(1,1);
-    HouseA.sendStartCode();
-    //HouseA.sendUnit(1);
+    
+    if (digitalRead(8) == LOW)
+    {
+      HouseA.sendCommand(1,1);
+    }
+    
 }
 

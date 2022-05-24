@@ -5,7 +5,7 @@ volatile int zero_detected_sender = 0;
 
 void X10_Sender::burstTimerStart()
 {
-    TCNT2 = 256-250; //Vent 1 ms.
+    TCNT2 = 256-250; //Vent 1 ms. -250 -- 2 ms = 125
     TCCR2A = 0b00000000;
     TCCR2B = 0b00000100;
 
@@ -72,8 +72,10 @@ void X10_Sender::countOneZeroCross()
             //Lav ingenting.
     }
 
+    delayMicroseconds(450);
     //Nulstiller Zero_detected:
     zero_detected_sender = 0;
+
 }
 
 void X10_Sender::sendStartCode()
@@ -81,10 +83,6 @@ void X10_Sender::sendStartCode()
     byte startcode = 0b1110;
     int bit_size = 4;
 
-    zero_detected_sender = 0; //Ignorer tidligere zerocross
-    countOneZeroCross();
-
-   //countOneZeroCross(); //Vent til zerocross med at sende, for at synkronisere.
 
     for (size_t i = 1; i <= bit_size; i++)
     {
@@ -102,7 +100,9 @@ void X10_Sender::sendStartCode()
 void X10_Sender::sendCommand(int Unit, int Function)
 {
     
-    
+    zero_detected_sender = 0; //Ignorer tidligere zerocross
+    countOneZeroCross();
+
     //Første sending af Adresse:
     sendStartCode();
     sendHouseA();
@@ -115,7 +115,7 @@ void X10_Sender::sendCommand(int Unit, int Function)
     }
     
 
-    //Første sending af Command:
+    // Første sending af Command:
     sendStartCode();
     sendHouseA();
     sendFunction(Function);
