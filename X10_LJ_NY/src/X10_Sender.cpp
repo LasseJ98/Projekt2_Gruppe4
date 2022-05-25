@@ -5,9 +5,9 @@ volatile int zero_detected_sender = 0;
 
 void X10_Sender::burstTimerStart()
 {
-    TCNT2 = 256-250; //Vent 1 ms. -250 -- 2 ms = 125
+    TCNT2 = 256-125; //Vent 1 ms. -250 -- 2 ms = 125
     TCCR2A = 0b00000000;
-    TCCR2B = 0b00000100;
+    TCCR2B = 0b00000110;
 
     
     while ((TIFR2 & (1<<0)) == 0)
@@ -61,6 +61,7 @@ void X10_Sender::initX10(int tx_pin)
     tx_pin_ = tx_pin;
     
    pinMode(tx_pin_, OUTPUT);
+    
 
 }
 
@@ -91,6 +92,7 @@ void X10_Sender::sendStartCode()
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
     
         burstTimerStart();
+        
 
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross();
@@ -103,25 +105,33 @@ void X10_Sender::sendCommand(int Unit, int Function)
     zero_detected_sender = 0; //Ignorer tidligere zerocross
     countOneZeroCross();
 
-    //Første sending af Adresse:
-    sendStartCode();
-    sendHouseA();
-    sendUnit(Unit);
-    sendSuffix(1);
+     for (size_t i = 0; i < 2; i++)
+     {
+         //Første sending af Adresse:
+     sendStartCode();
+     sendHouseA();
+     sendUnit(Unit);
+     sendSuffix(1);
+    }
+    
     //Vent 6 zerocrosses:
-    for (size_t i = 0; i < 6; i++)
+    for (size_t i = 0; i < 5; i++)
     {
         countOneZeroCross();
     }
     
-
+    for (size_t i = 0; i < 2; i++)
+     {
+     sendStartCode();
+     sendHouseA();
+     sendFunction(Function);
+     sendSuffix(2);  
+     }
+    
     // Første sending af Command:
-    sendStartCode();
-    sendHouseA();
-    sendFunction(Function);
-    sendSuffix(2);
+    
     //Vent 6 zerocrosses:
-    for (size_t i = 0; i < 6; i++)
+    for (size_t i = 0; i < 5; i++)
     {
         countOneZeroCross();
     }
@@ -140,6 +150,7 @@ void X10_Sender::sendHouseA()
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
 
         burstTimerStart();
+        
 
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
@@ -159,6 +170,7 @@ void X10_Sender::sendUnit(int unit)
         digitalWrite(tx_pin_, finalBit); //Send vores bit.
 
         burstTimerStart();
+        
     
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
@@ -179,6 +191,7 @@ void X10_Sender::sendFunction(int function)
 
         burstTimerStart();
         
+        
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
@@ -186,7 +199,7 @@ void X10_Sender::sendFunction(int function)
 
 void X10_Sender::sendSuffix(int Suffix)
 {
-    byte suffix = suffix_Array[suffix-1];
+    byte suffix = suffix_Array[Suffix-1];
     int bit_size = 2; //Size of the Suffix
 
     for (size_t i = 1; i <= bit_size; i++)
@@ -196,13 +209,12 @@ void X10_Sender::sendSuffix(int Suffix)
         digitalWrite(tx_pin_, finalBit); //Send vores bit
 
         burstTimerStart(); //Burst i 1 ms.
+        
    
         digitalWrite(tx_pin_, LOW); //Sætter TX low.
         countOneZeroCross(); //Vent 1 zero-cross.
     }
 }
-
-
 
 void X10_Sender::sendMorningRoutine()
 {

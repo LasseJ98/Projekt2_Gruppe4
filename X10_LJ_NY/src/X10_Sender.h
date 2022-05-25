@@ -18,12 +18,11 @@ void configMorning(int unit1, int function1, int unit2, int function2, int unit3
 void sendEveningRoutine();
 void configEveningRoutine(int unit1, int function1, int unit2, int function2, int unit3, int function3, int unit4, int function4, int unit5, int function5, int unit6, int function6);
 void waitTime(int hour, int minutes);
-//void test_interrupt();
 
 private:
 int tx_pin_;
 byte unit_Array[6]{0b01101001,0b10101001,0b01011001, 0b10011001, 0b01010110, 0b10010110}; //Unit 1 til 6
-byte function_Array[4]{0b01011001, 0b01011010, 0b01100110, 0b01100101}; //Funktion: On, Off, Bright, Dim
+byte function_Array[2]{0b01011001, 0b01011010}; //Funktion: On, Off, Dim
 byte suffix_Array[2]{0b01, 0b10}; //Unit og Funktion
 
 int morningDevice1;
