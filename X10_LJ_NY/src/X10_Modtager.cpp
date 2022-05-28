@@ -4,7 +4,12 @@
 #define HIGH 0x1
 #define LOW  0x0
 
-volatile int zero_detected_modtager;
+
+
+volatile int zero_detected_modtager = 0;
+volatile int last_function = 0;
+volatile uint8_t function_temp = 0;
+volatile bool function = false;
 
 void X10_Modtager::initZeroCrossInterrupt_Modtager()
 {
@@ -16,11 +21,12 @@ void X10_Modtager::initZeroCrossInterrupt_Modtager()
 	EICRA = 0b00000100;
 }
 
-void X10_Modtager::initX10_modtager(int rx_pin)
+void X10_Modtager::initX10_modtager(int rx_pin, int unit)
 {
     //Definer RX input pin.
     rx_pin_ = (rx_pin == 0 || rx_pin == 19 || rx_pin == 15 ? rx_pin : 19);
-
+    unit_ = (unit >= 1 && unit <= 6 ? unit : 1);
+        
     pinMode(rx_pin_, INPUT);
 }
 
@@ -94,7 +100,7 @@ bool X10_Modtager::checkHouseA()
 
 bool X10_Modtager::checkUnit()
 {
-    uint8_t unitCode = 0b01101001;
+    uint8_t unitCode = unit_Array[unit_-1];
     
     countOneZeroCross();
     readingWait();
@@ -139,28 +145,45 @@ bool X10_Modtager::checkSuffix(int Suffix) //1 for unit & 2 for funktion.
 }
 
 bool X10_Modtager::checkFunction()
-{
-    uint16_t readingBit = 0b0000000000;
+{ 
+    countOneZeroCross();
+    readingWait();
 
-       for (size_t i = 1; i <= 8; i++)
-       {
-           readingBit |= (digitalRead(rx_pin_) << i); 
-           
-       }
+    if (last_function == 0)
+    {
+        //Kig efter funktionen ON
+        function_temp = function_Array[0];
+    }
+    else if (last_function == 1)
+    {
+        //Kig efter funktionen OFF
+        function_temp = function_Array[1];
+    }
+    
+    rollingByteFunction_ <<= 1;
 
-    return readingBit;
+    if (digitalRead(rx_pin_) == HIGH)
+    {
+        rollingByteFunction_++;
+    }
+
+    if (rollingByteFunction_ == function_temp)
+    {
+        return true;
+    }
+
+   return false;
 }
 
-int* X10_Modtager::receiveCommands(int unit, int function)
+int* X10_Modtager::receiveCommands()
 {
-    int8_t unit_temp = unit_Array[unit-1];
-    int8_t function_temp = function_Array[function-1];
+    int8_t unit_temp = unit_Array[unit_-1];
     static int return_array[2];
 
 
     if (rollingByteStart_ == 0b1110)
     {
-        /* code */
+        //Kontrollere om vi allerede har læst startkoden.
     }
     else if (checkStartCode() == true)
     {
@@ -186,7 +209,7 @@ int* X10_Modtager::receiveCommands(int unit, int function)
 
     if (rollingByteUnit_ == unit_temp)
     {
-        /* code */
+        //Kontrollere om vi allerede har læst unit_temp.
     }
     else if (checkUnit() == true)
     {
@@ -199,26 +222,27 @@ int* X10_Modtager::receiveCommands(int unit, int function)
 
      if (rollingByteSuffix_ == 0b0001)
     {
-        /* code */
+        //Kontrollere om vi allerede har læst Suffixet for Unit
     }
     else if (checkSuffix(1) == true)
     {
         Serial.print("\nUnit Suffix godkendt\n");
         return_array[0] = unit_temp;
+        rollingByteSuffix_ = 0;
     }
     else
     {
         return 0;
     }
 
-    if (rollingByteFunction_ == function_temp)
+    if (function == true)
     {
-        /* code */
+        //Kontrollere om vi allerede har læst function_temp.
     }
     else if (checkFunction() == true)
     {
         Serial.print("\nFunction godkendt\n");
-
+        function = true;
     }
     else
     {
@@ -227,24 +251,42 @@ int* X10_Modtager::receiveCommands(int unit, int function)
 
      if (rollingByteSuffix_ == 0b0010)
     {
-        /* code */
+        //Kontrollere om vi allerede har læst functions suffix.
     }
     else if (checkSuffix(2) == true)
     {
         Serial.print("\nFunction Suffix godkendt\n");
-        return_array[1] = function_temp;
+
+        //Indsætter vores Function i retunering arrayet:
+        return_array[1] = rollingByteFunction_;
+
+        //Opdatering af last_function:
+        if (last_function == 1)
+        {
+            last_function = 0;
+        }
+        else
+        {
+            last_function = 1;
+        } 
+
+        //Resetter så vi er klar til at få nye bits.
+        function_temp = 0; 
+        rollingByteSuffix_ = 0;
+        rollingByteStart_ = 0;
+        rollingByteHouse_ = 0;
+        rollingByteUnit_ = 0;
+        rollingByteFunction_ = 0;
+        rollingByteSuffix_ = 0;
+        function = false;
+
+        //Retunere arrayet.
         return return_array;
     }
     else
     {
         return 0;
     }
-
-    rollingByteStart_ = 0;
-    rollingByteHouse_ = 0;
-    rollingByteUnit_ = 0;
-    rollingByteFunction_ = 0;
-    rollingByteSuffix_ = 0;
 }
 
 
@@ -256,6 +298,9 @@ void X10_Modtager::countOneZeroCross()
             //Lav ingenting & Vent til vi får et rising eller falling.
     }
 
+    //Vent lidt yderligere:
+    readingWait();
+
     //Nulstiller Zero_detected:
     zero_detected_modtager = 0;
 
@@ -265,4 +310,6 @@ ISR(INT1_vect)
 {
     //Sæt interruptet, så vi ved der har været et zerocross.
     zero_detected_modtager = 1;
+
+    
 }

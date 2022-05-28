@@ -21,7 +21,7 @@ byte * readDataPtr = new byte[2];
 volatile int *pointer;
 volatile char test;
 void setup() {
-  HouseA.initX10_modtager(RX_PIN);
+  HouseA.initX10_modtager(RX_PIN,1);
   HouseA.initZeroCrossInterrupt_Modtager();
   Serial.begin(9600);
 
@@ -30,7 +30,7 @@ void setup() {
 void loop() {
 
 
-  pointer = HouseA.receiveCommands(2,1);
+  pointer = HouseA.receiveCommands();
   
   if (Serial.available() > 0)
   {
