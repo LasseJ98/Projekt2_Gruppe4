@@ -7,6 +7,11 @@
 #define ZERO_PIN 2
 #define LED_PIN 13
 
+
+//ON/OFF
+#define ON_PWM 100
+#define OFF_PWM 0
+
 //Index definitions
 #define UNIT_INDEX 0
 #define COMMAND_INDEX 1
@@ -19,7 +24,7 @@ byte unitId = 0b01101001; //TODO: FIND ID
 //Read data
 byte * readDataPtr = new byte[2];
 volatile int *pointer;
-volatile char test;
+
 void setup() {
   HouseA.initX10_modtager(RX_PIN,1);
   HouseA.initZeroCrossInterrupt_Modtager();
@@ -28,21 +33,20 @@ void setup() {
 }
 
 void loop() {
-
-
   pointer = HouseA.receiveCommands();
   
-  if (Serial.available() > 0)
-  {
-    test = Serial.read();
-    Serial.print(test);
-  }
-  
-
   if (pointer[0] == unitId)
   {
-    Serial.print("\nDET VIRKER");
-    led.setPWM(100);
+    if (pointer[1] == ON_PWM)
+    {
+      Serial.print("\nLED'en er ON");
+      led.setPWM(100);
+    }
+    else if(pointer[1] == OFF_PWM)
+    {
+      Serial.print("\nLED'en er ON");
+      led.setPWM(0);
+    }
   }
   
   
