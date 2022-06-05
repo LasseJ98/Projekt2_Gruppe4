@@ -18,8 +18,7 @@ void setup()
 void loop()
 { 
     
-    while (digitalRead(11) == HIGH)
-    {
+    
         if (digitalRead(8) == HIGH)
         {
           HouseA.sendCommand(1,1);      
@@ -28,10 +27,6 @@ void loop()
         {
           HouseA.sendCommand(2,1);      
         }
-        
-    }
-    
-    
     
     
 }
