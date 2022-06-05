@@ -44,7 +44,7 @@ void loop() {
     }
     else if(pointer[1] == OFF_PWM)
     {
-      Serial.print("\nLED'en er ON");
+      Serial.print("\nLED'en er OFF");
       led.setPWM(0);
     }
   }
